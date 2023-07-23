@@ -1,0 +1,84 @@
+{
+  "family": "teste2",
+  "containerDefinitions": [
+      {
+          "name": "project",
+          "image": "402356712014.dkr.ecr.us-east-1.amazonaws.com/project:latest",
+          "cpu": 10,
+          "memory": 512,
+          "portMappings": [
+              {
+                  "name": "project-8000-tcp",
+                  "containerPort": 8000,
+                  "hostPort": 8000,
+                  "protocol": "tcp",
+                  "appProtocol": "http"
+              }
+          ],
+          "essential": true,
+          "command": [
+              "gunicorn",
+              "-w",
+              "3",
+              "-b",
+              ":8000",
+              "project.wsgi:application"
+          ],
+          "environment": [],
+          "mountPoints": [],
+          "volumesFrom": [],
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-create-group": "true",
+                  "awslogs-group": "/ecs/teste2",
+                  "awslogs-region": "us-east-1",
+                  "awslogs-stream-prefix": "ecs"
+              }
+          }
+      },
+      {
+          "name": "nginx",
+          "image": "402356712014.dkr.ecr.us-east-1.amazonaws.com/nginx:latest",
+          "cpu": 10,
+          "memory": 128,
+          "links": [
+              "project"
+          ],
+          "portMappings": [
+              {
+                  "name": "nginx-80-tcp",
+                  "containerPort": 80,
+                  "hostPort": 80,
+                  "protocol": "tcp",
+                  "appProtocol": "http"
+              }
+          ],
+          "essential": true,
+          "environment": [],
+          "mountPoints": [],
+          "volumesFrom": [],
+          "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                  "awslogs-create-group": "true",
+                  "awslogs-group": "/ecs/teste2",
+                  "awslogs-region": "us-east-1",
+                  "awslogs-stream-prefix": "ecs"
+              }
+          }
+      }
+  ],
+  "taskRoleArn": "arn:aws:iam::402356712014:role/ecsTaskExecutionRole",
+  "executionRoleArn": "arn:aws:iam::402356712014:role/ecsTaskExecutionRole",
+  "networkMode": "bridge",
+  "requiresCompatibilities": [
+      "EC2"
+  ],
+  "cpu": "1024",
+  "memory": "3072",
+  "runtimePlatform": {
+      "cpuArchitecture": "X86_64",
+      "operatingSystemFamily": "LINUX"
+  }
+}
